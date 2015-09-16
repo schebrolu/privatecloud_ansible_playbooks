@@ -1,0 +1,9 @@
+# Pre-install common tasks goes here
+
+- name: Install dependencies
+  yum: name=ntp
+  when: ("ansible_os_family == 'RedHat'" or "ansible_os_family == 'CentOS'")
+
+- name: Install dependencies
+  zypper: name=ntp
+  when: ("ansible_os_family == 'OpenSuse'")

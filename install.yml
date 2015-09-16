@@ -1,0 +1,76 @@
+# This playbook install all components of EDGE
+
+# All the common configuration stuff taken care here as part of the common role tasks
+- name: apply common configuration to all nodes
+  hosts: all
+  sudo: yes
+
+  roles:
+    - common
+
+# Prepare silent config file for the EDGE installation
+# In all the below mentioned role silent config file update should be first task, as this involve gathering host details
+# for other components to use
+# Install and configure DS component
+# In this case all DS kick in at the same time (how do we introduce delay for the non-seed node scenario)?
+- name: Install & configure DS
+  hosts: DS
+  sudo: yes
+  # Need to make it sequntial for seed and non-seed DS situation
+  # How do we ensure the seed node gets picked up first as part of this sequential approach?
+  # Better way would be sequence by the data store type :)
+  serial: 1
+
+  roles:
+    - ds
+
+- name: Install & configure QPID
+  hosts: QPID
+  sudo: yes
+
+  roles:
+    - qpid
+
+- name: Install & configure PS
+  hosts: PS
+  sudo: yes
+
+  roles:
+    - ps
+
+- name: Install & configure LDAP
+  hosts: LDAP
+  sudo: yes
+
+  roles:
+    - ldap
+
+- name: Install & configure MS & UI
+  hosts: MS
+  sudo: yes
+
+  roles:
+    - ms
+
+- name: Install & configure RMP
+  hosts: RMP
+  sudo: yes
+
+  roles:
+    - rmp
+
+- name: Install & configure EDGE on QPID,PS
+  hosts: QPIDNPS
+  sudo: yes
+
+  roles:
+    - edgeonqpidps
+
+- name: Post install sanity checks
+  hosts: all
+  sudo: yes
+
+  roles:
+    - postinstallsanity
+
+
